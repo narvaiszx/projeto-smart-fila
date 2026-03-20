@@ -1,6 +1,7 @@
 package com.senai.smartfila.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,18 +19,26 @@ public class DocumentosService {
 		return repository.findAll();
 	}
 	
-	public Documentos buscarPorId(Long id) {
-		return repository.findById(id).orElse(null);
+	public Optional<Documentos> buscarPorId(Long id) {
+		return repository.findById(id);
 	}
 	
-	public Documentos atualizar(Long id, Documentos documentosAlterada) {
-		Documentos documentosExistente = buscarPorId(id);
+	public Documentos salvar (Documentos documentos) {
+		return repository.save(documentos);
+	}
+	
+	public Documentos atualizar(Long id, Documentos documentosAlterados) {
+		Optional<Documentos> documentosExistentes = buscarPorId(id);
 		
-		if (documentosExistente != null) {
-			documentosExistente.setCpf(documentosAlterada.getCpf());
-			documentosExistente.setRg(documentosAlterada.getRg());
+		if(documentosExistentes.isPresent()) {
 			
-			return repository.save(documentosExistente);
+			Documentos atualizado = documentosExistentes.get();
+			
+			atualizado.setCpf(documentosAlterados.getCpf());
+			atualizado.setRg(documentosAlterados.getRg());
+			atualizado.setAluno(documentosAlterados.getAluno());
+			
+			return repository.save(atualizado);
 		}
 		return null;
 	}

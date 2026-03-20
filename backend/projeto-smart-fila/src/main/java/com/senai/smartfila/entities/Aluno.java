@@ -2,6 +2,7 @@ package com.senai.smartfila.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.senai.smartfila.validations.annotations.TelefoneBR;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +13,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "tb_aluno")
@@ -21,12 +25,28 @@ public class Aluno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Pattern(
+    		regexp="^[\\p{L}]+( [\\p{L]]+)*$",
+    		message = "O nome do aluno deve conter apenas letras e espaços.")
+    @NotBlank(message ="O nome é obrigatório.")
     private String nome;
 
-    @Column(unique = true)
+    @Pattern(regexp="^RA-\\d{4}-\\d{4}$",
+    		message = "O RA deve conter apenas letras, números e hífen.")
+    @Column(unique = true, nullable = false, length = 20)
+    @Size (min = 5, max = 20, message = "O RA deve ter entre 5 e 20 caracteres")
     @NotBlank
     private String ra;
+    
+    @Email(message = "E-mail inválido.")
+    @Size(max = 120, message = "E-mail deve ter no máximo 120 caracteres.")
+    @Column(unique = true, length = 120)
+    private String email;
+    
+    @TelefoneBR(message="Telefone deve estar no padrão brasileiro.")
+    @Column(length = 20, unique = true)
+    @NotBlank(message="O telefone é obrigatório.")
+    private String telefone;
     
     @ManyToOne
     @JoinColumn(name = "fk_turma")

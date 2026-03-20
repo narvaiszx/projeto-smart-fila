@@ -1,6 +1,7 @@
 package com.senai.smartfila.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,17 +19,25 @@ public class TurmaService {
 		return repository.findAll();
 	}
 	
-	public Turma buscarPorId(Long id) {
-		return repository.findById(id).orElse(null);
+	public Optional<Turma> buscarPorId(Long id) {
+		return repository.findById(id);
+	}
+	
+	public Turma salvar (Turma turma) {
+		return repository.save(turma);
 	}
 	
 	public Turma atualizar(Long id, Turma turmaAlterada) {
-		Turma turmaExistente = buscarPorId(id);
+		Optional<Turma> turmaExistente = buscarPorId(id);
 		
-		if(turmaExistente != null) {
-			turmaExistente.setNome(turmaAlterada.getNome());
+		if (turmaExistente.isPresent()) {
 			
-			return repository.save(turmaExistente);
+			Turma atualizado = turmaExistente.get();
+			
+			atualizado.setNome(turmaAlterada.getNome());
+			atualizado.setAlunos(turmaAlterada.getAlunos());
+			
+			return repository.save(atualizado);
 		}
 		return null;
 	}

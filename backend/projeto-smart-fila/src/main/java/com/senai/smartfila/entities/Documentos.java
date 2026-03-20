@@ -1,5 +1,7 @@
 package com.senai.smartfila.entities;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
@@ -18,7 +20,9 @@ public class Documentos {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank
+	@NotBlank(message = "O CPF é obrigatório.")
+	@CPF(message = "CPF inválido.")
+	
 	private String cpf;
 	
 	@NotBlank
